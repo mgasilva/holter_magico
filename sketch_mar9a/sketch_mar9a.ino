@@ -1,4 +1,4 @@
-#define NCELLS 512
+#define NCELLS 256
 
 unsigned int signal[NCELLS];
 unsigned int counter = 0;
