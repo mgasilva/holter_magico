@@ -23,7 +23,13 @@ int nnIndex = 0;                      // circular buffer index
 bool armed = true;                    // "flag": ready to detect next rising crossing
 double signalavg = 512;                  // signal level average as a global variable
 double signalold = 512;                  // old signal average;
-double x = 0;                            // signal level as global variable;
+int x = 0;                            // signal level as global variables;
+int y = 0;
+int z = 0;
+int t = 0;
+int w = 0;
+int sample_count = 0;
+unsigned long now = 0;
 
 double cutoff = 800;                     // cutoff as global variable;
 double signal_sd = 200;                  // signal standard deviation as global variable;
@@ -80,6 +86,94 @@ float sdnn_ms() {
   return (float)sqrt(var);
 }
 
+int median(int a, int b, int c) {
+  if (a > b) {
+    int temp = a;
+    a = b;
+    b = temp;
+  }
+
+  if (b > c) {
+    int temp = b;
+    b = c;
+    c = temp;
+  }
+
+  if (a > b) {
+    int temp = a;
+    a = b;
+    b = temp;
+  }
+
+  return b;
+}
+
+int median5(int a, int b, int c, int d, int e) {
+
+  if (a > b) {
+    int temp = a;
+    a = b;
+    b = temp;
+  }
+
+  if (b > c) {
+    int temp = b;
+    b = c;
+    c = temp;
+  }
+
+  if (c > d) {
+    int temp = c;
+    c = d;
+    d = temp;
+  }
+
+  if (d > e) {
+    int temp = d;
+    d = e;
+    e = temp;
+  }
+
+  if (a > b) {
+    int temp = a;
+    a = b;
+    b = temp;
+  }
+
+  if (b > c) {
+    int temp = b;
+    b = c;
+    c = temp;
+  }
+
+  if (c > d) {
+    int temp = c;
+    c = d;
+    d = temp;
+  }
+
+  if (a > b) {
+    int temp = a;
+    a = b;
+    b = temp;
+  }
+
+  if (b > c) {
+    int temp = b;
+    b = c;
+    c = temp;
+  }
+
+  if (a > b) {
+    int temp = a;
+    a = b;
+    b = temp;
+  }
+
+  return c;
+}
+
+
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   Serial.begin(9600);
@@ -87,25 +181,28 @@ void setup() {
   computeThreshold();
   lastThresholdUpdate = millis();
   prevBeatTime = millis();
+
+  now = millis();
 }
 
 void loop() {
   // // Periodically refresh threshold so it adapts to drift
-  // unsigned long now = millis();
   // if (now - lastThresholdUpdate >= THRESHOLD_UPDATE_MS) {
   //   computeThreshold();
   //   lastThresholdUpdate = now;
   // }
-
+  w = t;
+  t = z;
+  z = y;
+  y = x;
   x = analogRead(SIGNAL_PIN);
-  signalavg += double((x - signalavg)/2000.);
-  cutoff = 1.1 * signalavg;
-  Serial.print("x = ");
-  Serial.println(x);
-  Serial.print("signalavg = ");
-  Serial.println(signalavg);
-  Serial.print("cutoff = ");
-  Serial.println(cutoff);
+  sample_count++;
+  if (sample_count % 5000 == 0) {
+    Serial.print(sample_count);
+    Serial.print(" samples in ");
+    Serial.print(millis()-now);
+    Serial.println(" ms.");
+  }
 
 //   // Rising crossing detection (edge-triggered)
 //   if (armed && x > cutoff) {
